@@ -1,0 +1,49 @@
+{
+	"$schema": "https://schema.tauri.app/config/2",
+	"productName": "Image Converter",
+	"version": "1.0.0",
+	"identifier": "io.github.constdefe.tauri-image-converter",
+	"build": {
+		"beforeDevCommand": "bun run dev",
+		"devUrl": "http://localhost:1420",
+		"beforeBuildCommand": "bun run build",
+		"frontendDist": "../dist",
+		"removeUnusedCommands": true
+	},
+	"app": {
+		"windows": [
+			{
+				"title": "Image Converter",
+				"width": 800,
+				"height": 700,
+				"minWidth": 500,
+				"minHeight": 600,
+				"dragDropEnabled": true,
+				"visible": false,
+				"additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection,EdgeCollections,msEdgeExtensionHub --disable-webgl --disable-speech-api --disable-features=AudioServiceOutOfProcess --disable-extensions --disable-background-networking --disable-component-update --disable-sync"
+			}
+		],
+		"security": {
+			"csp": "default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'"
+		}
+	},
+	"bundle": {
+		"active": true,
+		"targets": [],
+		"icon": ["icons/icon.ico"],
+		"fileAssociations": [
+			{
+				"ext": ["png", "jpg", "jpeg", "webp", "bmp", "gif", "avif", "ico"],
+				"name": "Image File",
+				"description": "Image files supported by Image Converter"
+			}
+		],
+		"windows": {
+			"webviewInstallMode": {
+				"type": "embedBootstrapper"
+			},
+			"allowDowngrades": true,
+			"wix": null
+		}
+	}
+}

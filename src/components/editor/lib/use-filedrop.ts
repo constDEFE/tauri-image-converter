@@ -1,0 +1,41 @@
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { useEffect } from "preact/hooks";
+import { toast } from "sonner";
+
+import { IMAGE_FORMATS } from "./constants";
+
+export const useFileDrop = (loadCb: (path: string) => Promise<void>, previewUrl: string | null) => {
+	useEffect(() => {
+		const appWindow = getCurrentWindow();
+
+		const sub = async () => {
+			const unsub = await appWindow.onDragDropEvent((event) => {
+				if (event.payload.type !== "drop" || event.payload.paths?.length < 1) {
+					return;
+				}
+
+				const filePath = event.payload.paths[0]!;
+				const fileName = filePath?.toLowerCase() ?? "file";
+				const hasValidExtension = IMAGE_FORMATS.some((ext) => fileName.endsWith(`.${ext}`));
+
+				if (!hasValidExtension) {
+					toast.error("Invalid file type. Use a valid image file");
+					return;
+				}
+
+				loadCb(filePath);
+			});
+
+			return unsub;
+		};
+
+		let unsub: () => void;
+		sub().then((fn) => (unsub = fn));
+
+		return () => {
+			unsub?.();
+
+			if (previewUrl) URL.revokeObjectURL(previewUrl);
+		};
+	}, [loadCb, previewUrl]);
+};

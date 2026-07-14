@@ -1,0 +1,43 @@
+{
+	"name": "tauri-image-converter",
+	"version": "1.0.0",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/constDEFE/tauri-image-converter"
+	},
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"tauri": "tauri",
+		"lint": "oxlint ./src",
+		"lint:fix": "oxlint ./src --fix",
+		"format": "oxfmt --write \"src/**/*.{ts,tsx,css,json}\"",
+		"format:check": "oxfmt --check \"src/**/*.{ts,tsx,css,json}\"",
+		"check": "tsc && oxlint ./src && oxfmt --check \"src/**/*.{ts,tsx,css,json}\""
+	},
+	"dependencies": {
+		"@tanstack/react-hotkeys": "^0.10.0",
+		"@tauri-apps/api": "^2.11.0",
+		"@tauri-apps/plugin-dialog": "^2.7.1",
+		"@tauri-apps/plugin-opener": "^2.5.4",
+		"clsx": "^2.1.1",
+		"preact": "^10.29.2",
+		"sonner": "^2.0.7",
+		"tailwind-merge": "^3.6.0",
+		"zustand": "^5.0.14"
+	},
+	"devDependencies": {
+		"@preact/preset-vite": "^2.10.5",
+		"@tailwindcss/vite": "^4.3.0",
+		"@tauri-apps/cli": "^2.11.2",
+		"@types/node": "^24",
+		"oxfmt": "^0.57.0",
+		"oxlint": "^1.72.0",
+		"tailwindcss": "^4.3.0",
+		"typescript": "7.0.2",
+		"vite": "^8.0.16"
+	}
+}
