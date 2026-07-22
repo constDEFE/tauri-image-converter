@@ -2,7 +2,9 @@ use crate::cache::{BUFFER_POOL, IMAGE_CACHE};
 use crate::config::MAX_DIMENSION;
 use crate::encode::{calculate_preview_dimensions, encode_png_preview, save_image};
 use crate::log::log_conversion;
-use crate::options::{ConvertOptions, ResizeAlgorithm, parse_image_format, validate_options};
+use crate::options::{
+    ConvertOptions, ResizeAlgorithm, SUPPORTED_FORMATS, parse_image_format, validate_options,
+};
 use crate::processing::{apply_filters, resize_image};
 use crate::types::ImageData;
 use image::{DynamicImage, ImageReader};
@@ -64,10 +66,10 @@ async fn build_preview(
 
 #[command]
 pub async fn load_image(path: String) -> Result<ImageData, String> {
-    // Validate file extension first (quick check)
     let path_lower = path.to_lowercase();
-    let valid_extensions = ["png", "jpg", "jpeg", "webp", "bmp", "gif", "ico", "avif"];
-    let has_valid_ext = valid_extensions.iter().any(|ext| path_lower.ends_with(ext));
+    let has_valid_ext = SUPPORTED_FORMATS
+        .iter()
+        .any(|ext| path_lower.ends_with(ext));
 
     if !has_valid_ext {
         return Err("Invalid file type. Please select an image file".to_string());
@@ -216,8 +218,7 @@ pub fn convert_cli(
     let image_format = parse_image_format(&format_str)?;
 
     let format_type_str = format_type.unwrap_or_else(|| {
-        let lossless = matches!(format_str.to_lowercase().as_str(), "png" | "bmp" | "ico");
-        if lossless {
+        if crate::options::is_format_lossless(&format_str) {
             "lossless".to_string()
         } else {
             "lossy".to_string()

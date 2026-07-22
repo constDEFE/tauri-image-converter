@@ -1,8 +1,8 @@
 use crate::config;
 use image::{
-    DynamicImage, ExtendedColorType, ImageEncoder, ImageFormat,
     codecs::jpeg::JpegEncoder,
     codecs::png::{CompressionType, FilterType, PngEncoder},
+    DynamicImage, ExtendedColorType, ImageEncoder, ImageFormat,
 };
 use ravif::{Encoder as RavifEncoder, Img};
 use rgb::FromSlice;
@@ -86,9 +86,8 @@ pub fn save_image(
     }
 
     let estimated_size = (img.width() * img.height() * 4) as usize;
-    const STREAMING_THRESHOLD: usize = config::SAVE_STREAM_THRESHOLD;
 
-    if estimated_size > STREAMING_THRESHOLD {
+    if estimated_size > config::SAVE_STREAM_THRESHOLD {
         let file = fs::File::create(output_path).map_err(|e| e.to_string())?;
         let mut writer = std::io::BufWriter::new(file);
 

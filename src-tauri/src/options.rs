@@ -2,6 +2,16 @@ use fast_image_resize as fr;
 use image::ImageFormat;
 use serde::{Deserialize, Serialize};
 
+pub const SUPPORTED_FORMATS: &[&str] = &["png", "jpg", "jpeg", "webp", "bmp", "gif", "avif", "ico"];
+pub const LOSSY_FORMATS: &[&str] = &["avif", "jpeg", "jpg", "gif", "webp"];
+pub const LOSSLESS_FORMATS: &[&str] = &["bmp", "ico", "png", "webp"];
+
+pub fn is_format_lossless(format: &str) -> bool {
+    LOSSLESS_FORMATS
+        .iter()
+        .any(|f| f == &format.to_lowercase().as_str())
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConvertOptions {
     pub format: String,
@@ -50,6 +60,10 @@ impl ResizeAlgorithm {
 }
 
 pub fn parse_image_format(format_str: &str) -> Result<ImageFormat, String> {
+    if format_str.is_empty() {
+        return Err("Format string cannot be empty".to_string());
+    }
+
     match format_str.to_lowercase().as_str() {
         "png" => Ok(ImageFormat::Png),
         "jpg" | "jpeg" => Ok(ImageFormat::Jpeg),
@@ -63,12 +77,9 @@ pub fn parse_image_format(format_str: &str) -> Result<ImageFormat, String> {
 }
 
 fn validate_format_for_type(format: &str, format_type: &str) -> Result<(), String> {
-    let lossy_formats = ["avif", "jpeg", "jpg", "webp"];
-    let lossless_formats = ["bmp", "gif", "ico", "png", "webp"];
-
     let allowed = match format_type.to_lowercase().as_str() {
-        "lossy" => &lossy_formats[..],
-        "lossless" => &lossless_formats[..],
+        "lossy" => LOSSY_FORMATS,
+        "lossless" => LOSSLESS_FORMATS,
         other => {
             return Err(format!(
                 "Invalid format_type: '{}'. Must be 'lossy' or 'lossless'",
